@@ -1,0 +1,125 @@
+[gd_resource type="ShaderMaterial" load_steps=14 format=2]
+
+[ext_resource path="res://Assets/slash/horizontal_gradient_effect.png" type="Texture" id=1]
+[ext_resource path="res://Assets/slash/spherical_gradient_effect.png" type="Texture" id=2]
+
+[sub_resource type="VisualShaderNodeScalarUniform" id=1]
+uniform_name = "SlashState"
+
+[sub_resource type="VisualShaderNodeScalarOp" id=2]
+default_input_values = [ 0, 0.0, 1, -1.0 ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeScalarOp" id=3]
+operator = 2
+
+[sub_resource type="VisualShaderNodeTexture" id=4]
+texture = ExtResource( 2 )
+
+[sub_resource type="VisualShaderNodeTexture" id=5]
+texture = ExtResource( 1 )
+
+[sub_resource type="VisualShaderNodeVectorCompose" id=6]
+
+[sub_resource type="VisualShaderNodeVectorDecompose" id=7]
+
+[sub_resource type="VisualShaderNodeScalarOp" id=8]
+
+[sub_resource type="VisualShaderNodeVectorOp" id=9]
+default_input_values = [ 0, Vector3( 0, 0, 0 ), 1, Vector3( 0.5, 1, 1 ) ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeInput" id=10]
+input_name = "uv"
+
+[sub_resource type="VisualShader" id=11]
+code = "shader_type spatial;
+render_mode specular_schlick_ggx, unshaded;
+
+uniform sampler2D tex_frg_3;
+uniform float SlashState;
+uniform sampler2D tex_frg_4;
+
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// Texture:3
+	vec4 tex_frg_3_read = texture(tex_frg_3, UV.xy);
+	vec3 n_out3p0 = tex_frg_3_read.rgb;
+	float n_out3p1 = tex_frg_3_read.a;
+
+// ScalarUniform:10
+	float n_out10p0 = SlashState;
+
+// ScalarOp:11
+	float n_in11p1 = -1.00000;
+	float n_out11p0 = n_out10p0 * n_in11p1;
+
+// Input:9
+	vec3 n_out9p0 = vec3(UV, 0.0);
+
+// VectorOp:8
+	vec3 n_in8p1 = vec3(0.50000, 1.00000, 1.00000);
+	vec3 n_out8p0 = n_out9p0 * n_in8p1;
+
+// VectorDecompose:6
+	float n_out6p0 = n_out8p0.x;
+	float n_out6p1 = n_out8p0.y;
+	float n_out6p2 = n_out8p0.z;
+
+// ScalarOp:7
+	float n_out7p0 = n_out11p0 + n_out6p0;
+
+// VectorCompose:5
+	vec3 n_out5p0 = vec3(n_out7p0, n_out6p1, n_out6p2);
+
+// Texture:4
+	vec4 tex_frg_4_read = texture(tex_frg_4, n_out5p0.xy);
+	vec3 n_out4p0 = tex_frg_4_read.rgb;
+	float n_out4p1 = tex_frg_4_read.a;
+
+// ScalarOp:2
+	float n_out2p0 = n_out3p1 * n_out4p1;
+
+// Output:0
+	ALPHA = n_out2p0;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+graph_offset = Vector2( -828, -27.25 )
+flags/unshaded = true
+nodes/fragment/2/node = SubResource( 3 )
+nodes/fragment/2/position = Vector2( 200, 160 )
+nodes/fragment/3/node = SubResource( 4 )
+nodes/fragment/3/position = Vector2( -40, 0 )
+nodes/fragment/4/node = SubResource( 5 )
+nodes/fragment/4/position = Vector2( -40, 240 )
+nodes/fragment/5/node = SubResource( 6 )
+nodes/fragment/5/position = Vector2( -240, 360 )
+nodes/fragment/6/node = SubResource( 7 )
+nodes/fragment/6/position = Vector2( -700, 360 )
+nodes/fragment/7/node = SubResource( 8 )
+nodes/fragment/7/position = Vector2( -460, 220 )
+nodes/fragment/8/node = SubResource( 9 )
+nodes/fragment/8/position = Vector2( -900, 340 )
+nodes/fragment/9/node = SubResource( 10 )
+nodes/fragment/9/position = Vector2( -1087, 361.75 )
+nodes/fragment/10/node = SubResource( 1 )
+nodes/fragment/10/position = Vector2( -840, 240 )
+nodes/fragment/11/node = SubResource( 2 )
+nodes/fragment/11/position = Vector2( -640, 220 )
+nodes/fragment/connections = PoolIntArray( 2, 0, 0, 1, 3, 1, 2, 0, 4, 1, 2, 1, 5, 0, 4, 0, 6, 2, 5, 2, 6, 1, 5, 1, 6, 0, 7, 1, 7, 0, 5, 0, 8, 0, 6, 0, 9, 0, 8, 0, 10, 0, 11, 0, 11, 0, 7, 0 )
+
+[resource]
+shader = SubResource( 11 )
+shader_param/SlashState = 0.361587
